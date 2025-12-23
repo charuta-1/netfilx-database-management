@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Login</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="login-style.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #141414 0%, #000 100%);
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .netflix-brand {
+            color: #e50914;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .auth-container {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://assets.nflxext.com/ffe/siteui/vlv3/a09bb938-2d90-42ae-84ca-adf063776df2/2eb745b4-7b00-45aa-9b35-0d32ae33c4a7/IN-en-20211213-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+            background-size: cover;
+        }
+        
+        .auth-card {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .form-control {
+            background: rgba(51, 51, 51, 0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        
+        .form-control:focus {
+            background: rgba(51, 51, 51, 1);
+            border-color: #e50914;
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
+        }
+        
+        .btn-netflix {
+            background: #e50914;
+            border: none;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .btn-netflix:hover {
+            background: #b20710;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Page -->
+    <div id="auth-page" class="page active">
+        <div class="auth-container d-flex align-items-center justify-content-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="text-center mb-5">
+                            <div class="netflix-brand">
+                                <i class="fab fa-netflix"></i> Netflix
+                            </div>
+                        </div>
+                        
+                        <!-- Login Form -->
+                        <div id="login-form" class="auth-form active">
+                            <div class="auth-card card p-4 rounded-3">
+                                <h1 class="text-center mb-4">Sign In</h1>
+                                <form id="loginForm">
+                                    <div class="mb-3">
+                                        <input type="email" id="loginEmail" class="form-control form-control-lg" placeholder="Email or phone number" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="Password" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-netflix btn-lg">Sign In</button>
+                                    </div>
+                                </form>
+                                <div class="text-center mt-4">
+                                    <p>New to Netflix? <a href="#" id="showRegister" class="text-decoration-none" style="color: #e50914;">Sign up now</a></p>
+                                    <p><a href="#" id="adminLoginLink" class="text-decoration-none" style="color: #e50914;">Admin Login</a></p>
+                                    <small class="text-muted">Demo: admin@netflix.com / admin123<br>User: john@example.com / password</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Login Form -->
+                        <div id="admin-login-form" class="auth-form d-none">
+                            <div class="auth-card card p-4 rounded-3">
+                                <h1 class="text-center mb-4">Admin Login</h1>
+                                <form id="adminLoginForm">
+                                    <div class="mb-3">
+                                        <input type="text" id="adminUsername" class="form-control form-control-lg" placeholder="Username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="password" id="adminPassword" class="form-control form-control-lg" placeholder="Password" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-netflix btn-lg">Admin Sign In</button>
+                                    </div>
+                                </form>
+                                <div class="text-center mt-4">
+                                    <p><a href="#" id="backToUserLogin" class="text-decoration-none" style="color: #e50914;">Back to User Login</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Register Form -->
+                        <div id="register-form" class="auth-form d-none">
+                            <div class="auth-card card p-4 rounded-3">
+                                <h1 class="text-center mb-4">Sign Up</h1>
+                                <form id="registerForm">
+                                    <div class="mb-3">
+                                        <input type="email" id="registerEmail" class="form-control form-control-lg" placeholder="Email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" id="registerUsername" class="form-control form-control-lg" placeholder="Username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="password" id="registerPassword" class="form-control form-control-lg" placeholder="Password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Date of Birth</label>
+                                        <input type="date" id="registerDateOfBirth" class="form-control form-control-lg" required max="2010-01-01">
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-netflix btn-lg">Sign Up</button>
+                                    </div>
+                                </form>
+                                <div class="text-center mt-4">
+                                    <p>Already have an account? <a href="#" id="showLogin" class="text-decoration-none" style="color: #e50914;">Sign in</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Genre Selection Onboarding -->
+    <div id="genre-selection-page" class="page d-none">
+        <div class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center text-center">
+            <h1 class="display-4 mb-4">Choose Your Favorite Genres</h1>
+            <p class="lead mb-5">Help us personalize your Netflix experience</p>
+            <div class="genre-grid row g-3 mb-5" id="genreGrid" style="max-width: 1200px;">
+                <!-- Genre options will be populated here -->
+            </div>
+            <div>
+                <button class="btn btn-netflix btn-lg me-3" id="saveGenrePreferences" disabled>Continue</button>
+                <button class="btn btn-outline-light btn-lg" id="skipGenrePreferences">Skip for Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Selection Page -->
+    <div id="profile-page" class="page d-none">
+        <div class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center text-center">
+            <h1 class="display-4 mb-5">Who's watching?</h1>
+            <div class="profiles-grid row g-4 mb-5" id="profilesGrid" style="max-width: 800px;">
+                <!-- Profiles will be loaded here -->
+            </div>
+            <button class="btn btn-outline-light btn-lg" id="addProfileBtn">
+                <i class="fas fa-plus"></i> Add Profile
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Netflix</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                <!-- Toast message will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="login-app.js"></script>
+</body>
+</html>

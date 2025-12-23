@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - User Dashboard</title>
+    <link rel="stylesheet" href="user-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Main Application -->
+    <div id="main-app" class="page">
+        <!-- Navigation Header -->
+        <header class="main-header">
+            <nav class="navbar">
+                <div class="nav-brand">
+                    <i class="fab fa-netflix"></i>
+                    <span>Netflix</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#" data-section="home" class="nav-link active">Home</a></li>
+                    <li><a href="#" data-section="browse" class="nav-link">Browse</a></li>
+                    <li><a href="#" data-section="my-list" class="nav-link">My List</a></li>
+                    <li><a href="#" data-section="history" class="nav-link">History</a></li>
+                    <li><a href="#" data-section="recommendations" class="nav-link">Recommendations</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <span class="subscription-badge hidden" id="subscriptionBadge"></span>
+                    <div class="profile-dropdown">
+                        <div class="current-profile" id="currentProfile">
+                            <span class="profile-name"></span>
+                            <i class="fas fa-caret-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <div class="dropdown-header">Switch Profile</div>
+                            <div class="dropdown-profiles" id="dropdownProfiles"></div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" id="manageProfiles">Manage Profiles</a>
+                            <a href="#" id="genrePreferences">Genre Preferences</a>
+                            <a href="#" id="logout">Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Age Verification Notice -->
+        <div class="age-notice hidden" id="ageNotice">
+            <div class="age-notice-content">
+                <i class="fas fa-info-circle"></i>
+                <span>Content filtered for age-appropriate viewing</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Section -->
+            <section id="home-section" class="content-section active">
+                <!-- Hero Banner -->
+                <div class="hero-banner" id="heroBanner">
+                    <div class="hero-content">
+                        <h1 class="hero-title"></h1>
+                        <p class="hero-description"></p>
+                        <div class="hero-actions">
+                            <button class="btn btn--primary hero-btn" id="logWatchBtn">
+                                <i class="fas fa-clipboard-check"></i> Log Watch
+                            </button>
+                            <button class="btn btn--secondary hero-btn" id="infoBtn">
+                                <i class="fas fa-info-circle"></i> More Info
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subscription-plans hidden" id="subscriptionPlansSection">
+                    <div class="subscription-plans__header">
+                        <h2 class="subscription-plans__title">Choose Your Plan</h2>
+                        <span class="subscription-plans__status" id="subscriptionPlansStatus"></span>
+                    </div>
+                    <div class="subscription-plans__grid" id="subscriptionPlansGrid"></div>
+                </div>
+
+                <!-- Content Rows -->
+                <div class="content-rows">
+                    <div class="content-row" id="personalizedRecommendations">
+                        <h2>Recommended for You</h2>
+                        <div class="row-slider">
+                            <div class="title-grid" id="recommendationsGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-row" id="continueWatching">
+                        <h2>Recently Logged</h2>
+                        <div class="row-slider">
+                            <div class="title-grid" id="continueWatchingGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-row" id="myListRow">
+                        <h2>My List</h2>
+                        <div class="row-slider">
+                            <div class="title-grid" id="myListGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-row" id="genreBasedRows">
+                        <!-- Genre-based rows will be added dynamically -->
+                    </div>
+
+                    <div class="content-row">
+                        <h2>Popular on Netflix</h2>
+                        <div class="row-slider">
+                            <div class="title-grid" id="popularGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendations Section -->
+            <section id="recommendations-section" class="content-section">
+                <div class="section-header">
+                    <h1>Your Recommendations</h1>
+                    <p class="section-subtitle">Personalized titles to explore based on your preferences</p>
+                </div>
+                
+                <div class="recommendations-controls">
+                    <button class="btn btn--outline" id="refreshRecommendations">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                    <button class="btn btn--outline" id="recommendationHistory">
+                        <i class="fas fa-history"></i> History
+                    </button>
+                </div>
+
+                <div class="recommendations-grid">
+                    <div class="recommendation-reasons" id="recommendationReasons">
+                        <!-- Recommendation reasons will be shown here -->
+                    </div>
+                    <div class="content-grid" id="recommendationsContentGrid"></div>
+                </div>
+            </section>
+
+            <!-- Browse Section -->
+            <section id="browse-section" class="content-section">
+                <div class="browse-header">
+                    <h1>Browse</h1>
+                    <div class="browse-filters">
+                        <input id="browseSearchInput" type="text" class="form-control browse-search" placeholder="Search titles">
+                        <select id="genreFilter" class="form-control">
+                            <option value="">All Genres</option>
+                        </select>
+                        <select id="typeFilter" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="Movie">Movies</option>
+                            <option value="TV Show">TV Shows</option>
+                        </select>
+                        <select id="ratingFilter" class="form-control">
+                            <option value="">All Ratings</option>
+                            <option value="G">G</option>
+                            <option value="PG">PG</option>
+                            <option value="PG-13">PG-13</option>
+                            <option value="TV-Y">TV-Y</option>
+                            <option value="TV-Y7">TV-Y7</option>
+                            <option value="TV-14">TV-14</option>
+                            <option value="TV-MA">TV-MA</option>
+                            <option value="R">R</option>
+                        </select>
+                        <select id="countryFilter" class="form-control">
+                            <option value="">All Countries</option>
+                        </select>
+                        <button class="btn btn--outline btn--sm" id="clearBrowseFilters">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                <div class="browse-grid" id="browseGrid"></div>
+            </section>
+
+            <!-- My List Section -->
+            <section id="my-list-section" class="content-section">
+                <div class="section-header">
+                    <h1>My List</h1>
+                    <p class="section-subtitle">Titles you've added to your list</p>
+                </div>
+                <div class="content-grid" id="myListContentGrid"></div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history-section" class="content-section">
+                <div class="section-header">
+                    <h1>Watch History</h1>
+                    <p class="section-subtitle">Recently watched content</p>
+                </div>
+                <div class="content-grid" id="historyGrid"></div>
+            </section>
+
+            <!-- Search Results -->
+            <section id="search-results" class="content-section">
+                <div class="section-header">
+                    <h1>Search Results</h1>
+                </div>
+                <div class="content-grid" id="searchResultsGrid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Title Detail Modal -->
+    <div class="modal hidden" id="titleModal">
+        <div class="modal-content title-modal-content">
+            <button class="modal-close" id="titleModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="title-detail">
+                <div class="title-header">
+                    <h1 id="modalTitle"></h1>
+                    <div class="title-meta">
+                        <span id="modalYear"></span>
+                        <span id="modalRating" class="rating-badge"></span>
+                        <span id="modalDuration"></span>
+                    </div>
+                    <p id="modalDescription"></p>
+                    <div class="age-warning hidden" id="ageWarning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>This content may not be age-appropriate</span>
+                    </div>
+                </div>
+
+                <div class="title-actions">
+                    <button class="btn btn--primary" id="modalLogWatchBtn">
+                        <i class="fas fa-clipboard-check"></i> Log Watch
+                    </button>
+                    <button class="btn btn--secondary" id="modalWatchlistBtn">
+                        <i class="fas fa-plus"></i> Save to List
+                    </button>
+                </div>
+
+                <div class="rating-actions">
+                    <button class="rating-btn" id="thumbsUpBtn" data-rating="thumbsup">
+                        <i class="fas fa-thumbs-up"></i>
+                    </button>
+                    <button class="rating-btn" id="thumbsDownBtn" data-rating="thumbsdown">
+                        <i class="fas fa-thumbs-down"></i>
+                    </button>
+                    <button class="rating-btn" id="notInterestedBtn" data-rating="notinterested">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="recommendation-reason" id="recommendationReason"></div>
+            </div>
+
+            <div class="title-info">
+                <div class="info-section">
+                    <h3>Cast</h3>
+                    <p id="modalCast"></p>
+                </div>
+                <div class="info-section">
+                    <h3>Genres</h3>
+                    <p id="modalGenres"></p>
+                </div>
+                <div class="info-section">
+                    <h3>Directors</h3>
+                    <p id="modalDirectors"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Profile Modal -->
+    <div class="modal hidden" id="addProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Profile</h2>
+                <button class="modal-close" id="addProfileModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addProfileForm" class="modal-form">
+                <div class="form-group">
+                    <label class="form-label">Profile Name</label>
+                    <input type="text" name="profileName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Maturity Rating Override</label>
+                    <select name="maturityRating" class="form-control">
+                        <option value="">Use account age settings</option>
+                        <option value="G">G - General Audiences</option>
+                        <option value="PG">PG - Parental Guidance</option>
+                        <option value="PG-13">PG-13 - Parents Strongly Cautioned</option>
+                        <option value="TV-Y">TV-Y - All Children</option>
+                        <option value="TV-Y7">TV-Y7 - Ages 7 and Above</option>
+                        <option value="TV-14">TV-14 - Ages 14 and Above</option>
+                        <option value="TV-MA">TV-MA - Mature Audiences</option>
+                        <option value="R">R - Restricted</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn--secondary" id="addProfileCancel">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Add Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Genre Preferences Modal -->
+    <div class="modal hidden" id="genrePreferencesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Genre Preferences</h2>
+                <button class="modal-close" id="genrePreferencesModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="genrePreferencesForm" class="modal-form">
+                <p class="modal-description">Adjust your genre preferences to get better recommendations.</p>
+                <div class="genre-preferences-sliders" id="genrePreferencesSliders">
+                    <!-- Genre sliders will be populated here -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn--secondary" id="genrePreferencesCancel">Cancel</button>
+                    <button type="button" class="btn btn--primary" id="saveGenrePreferencesModal">Save Preferences</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Subscription Plan Modal -->
+    <div class="modal hidden" id="subscriptionModal">
+        <div class="modal-content subscription-modal-content">
+            <div class="modal-header">
+                <h2>Your Subscription Plan</h2>
+                <button class="modal-close" id="subscriptionModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="subscription-summary" id="subscriptionSummary">
+                <!-- Subscription details injected dynamically -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn--secondary" id="subscriptionModalDone">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast hidden" id="toast">
+        <div class="toast-content">
+            <div class="toast-icon" id="toastIcon"></div>
+            <div class="toast-message" id="toastMessage"></div>
+        </div>
+        <button class="toast-close" id="toastClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="user-app.js"></script>
+</body>
+</html>

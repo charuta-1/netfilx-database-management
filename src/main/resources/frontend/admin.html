@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Admin Dashboard -->
+    <div id="admin-page" class="page active">
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <div class="admin-sidebar-header">
+                    <div class="netflix-logo">
+                        <i class="fab fa-netflix"></i>
+                        <span>Admin</span>
+                    </div>
+                </div>
+                <nav class="admin-sidebar-nav">
+                    <a href="#" class="admin-nav-item active" data-section="dashboard">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="admin-nav-item" data-section="titles">
+                        <i class="fas fa-film"></i>
+                        <span>Title Management</span>
+                    </a>
+                    <a href="#" class="admin-nav-item" data-section="recommendations-admin">
+                        <i class="fas fa-magic"></i>
+                        <span>Recommendations</span>
+                    </a>
+                    <a href="#" class="admin-nav-item" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="#" class="admin-nav-item" data-section="actors">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Actors</span>
+                    </a>
+                    <a href="#" class="admin-nav-item" data-section="directors">
+                        <i class="fas fa-video"></i>
+                        <span>Directors</span>
+                    </a>
+                    <a href="#" class="admin-nav-item" data-section="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </nav>
+                <div class="admin-sidebar-footer">
+                    <button class="btn btn--secondary" id="adminLogout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </aside>
+            
+            <!-- Main Admin Content -->
+            <main class="admin-main">
+                <header class="admin-header">
+                    <h1 id="adminSectionTitle">Dashboard</h1>
+                    <div class="admin-header-actions">
+                        <span id="adminUserInfo">Welcome, Admin</span>
+                    </div>
+                </header>
+                
+                <div class="admin-content">
+                    <!-- Dashboard Section -->
+                    <section id="admin-dashboard" class="admin-section active">
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h3>Total Titles</h3>
+                                <div class="stat-number" id="totalTitles">0</div>
+                                <div class="stat-label">Movies & TV Shows</div>
+                            </div>
+                            <div class="analytics-card">
+                                <h3>Total Users</h3>
+                                <div class="stat-number" id="totalUsers">0</div>
+                                <div class="stat-label">Active Subscribers</div>
+                            </div>
+                            <div class="analytics-card">
+                                <h3>Recommendations Generated</h3>
+                                <div class="stat-number" id="totalRecommendations">0</div>
+                                <div class="stat-label">This Month</div>
+                            </div>
+                            <div class="analytics-card">
+                                <h3>User Engagement</h3>
+                                <div class="stat-number" id="userEngagement">0%</div>
+                                <div class="stat-label">Recommendation CTR</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="dashboardChart"></canvas>
+                        </div>
+                    </section>
+                    
+                    <!-- Title Management Section -->
+                    <section id="admin-titles" class="admin-section">
+                        <div class="admin-section-header">
+                            <h2>Title Management</h2>
+                            <div class="section-actions">
+                                <button class="btn btn--primary" onclick="netflixApp.showTitleModal()">New Title</button>
+                                <button class="btn btn--secondary" onclick="netflixApp.exportTitles()">Export</button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-management">
+                            <!-- Advanced Filters Sidebar -->
+                            <div class="filters-sidebar">
+                                <div class="filter-header">
+                                    <h3>Filters</h3>
+                                    <button class="btn btn--secondary btn--sm" onclick="netflixApp.clearAllFilters()">Clear All</button>
+                                </div>
+                                
+                                <!-- Search Filter -->
+                                <div class="filter-section">
+                                    <div class="filter-title">Search</div>
+                                    <input type="text" id="titleSearchInput" class="form-control" placeholder="Search titles, cast, directors...">
+                                </div>
+                                
+                                <!-- Type Filter -->
+                                <div class="filter-section">
+                                    <div class="filter-title">Type</div>
+                                    <div class="filter-options" id="typeFilters">
+                                        <!-- Type filters will be populated -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Genre Filter -->
+                                <div class="filter-section">
+                                    <div class="filter-title">Genres</div>
+                                    <div class="filter-options scrollable" id="genreFilters">
+                                        <!-- Genre filters will be populated -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Country Filter -->
+                                <div class="filter-section">
+                                    <div class="filter-title">Countries</div>
+                                    <div class="filter-options scrollable" id="countryFilters">
+                                        <!-- Country filters will be populated -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Rating Filter -->
+                                <div class="filter-section">
+                                    <div class="filter-title">Rating</div>
+                                    <div class="filter-options" id="ratingFilters">
+                                        <!-- Rating filters will be populated -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Year Filter -->
+                                <div class="filter-section">
+                                    <div class="filter-title">Release Year</div>
+                                    <div class="year-range">
+                                        <input type="number" id="yearMin" class="form-control" placeholder="Min" min="1900" max="2024">
+                                        <input type="number" id="yearMax" class="form-control" placeholder="Max" min="1900" max="2024">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Main Content Area -->
+                            <div class="titles-main">
+                                <!-- Applied Filters -->
+                                <div class="applied-filters" id="appliedFilters"></div>
+                                
+                                <!-- Titles Table -->
+                                <div class="data-table-container">
+                                    <div id="titlesTableContainer">
+                                        <div class="loading"><div class="loading-spinner"></div> Loading titles...</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <div class="pagination" id="titlesPagination"></div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Recommendation Management Section -->
+                    <section id="admin-recommendations-admin" class="admin-section">
+                        <div class="admin-section-header">
+                            <h2>Recommendation System Management</h2>
+                        </div>
+                        
+                        <div class="recommendation-management">
+                            <!-- Recommendation Settings -->
+                            <div class="settings-card">
+                                <h3>Algorithm Settings</h3>
+                                <div class="settings-grid">
+                                    <div class="setting-item">
+                                        <label>Genre Weight</label>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.4" id="genreWeight">
+                                        <span class="weight-value">40%</span>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label>Viewing History Weight</label>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.3" id="historyWeight">
+                                        <span class="weight-value">30%</span>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label>Rating Weight</label>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.2" id="ratingWeight">
+                                        <span class="weight-value">20%</span>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label>Popularity Weight</label>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.1" id="popularityWeight">
+                                        <span class="weight-value">10%</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn--primary" onclick="netflixApp.saveRecommendationSettings()">Save Settings</button>
+                            </div>
+                            
+                            <!-- Recommendation Analytics -->
+                            <div class="analytics-card">
+                                <h3>Recommendation Performance</h3>
+                                <div class="chart-container">
+                                    <canvas id="recommendationChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Other Admin Sections -->
+                    <section id="admin-users" class="admin-section">
+                        <div class="admin-section-header">
+                            <h2>User Management</h2>
+                            <div class="section-actions">
+                                <button class="btn btn--primary" id="addUserBtn">
+                                    <i class="fas fa-user-plus"></i> New User
+                                </button>
+                                <button class="btn btn--secondary" id="refreshUsersBtn">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="user-management">
+                            <div class="data-table-container" id="usersTableContainer"></div>
+                        </div>
+                    </section>
+                    
+                    <section id="admin-actors" class="admin-section">
+                        <h2>Actor Management</h2>
+                        <div id="actorsTableContainer"></div>
+                    </section>
+                    
+                    <section id="admin-directors" class="admin-section">
+                        <h2>Director Management</h2>
+                        <div id="directorsTableContainer"></div>
+                    </section>
+                    
+                    <section id="admin-analytics" class="admin-section">
+                        <h2>Analytics</h2>
+                        <div id="analyticsContainer"></div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Title Management Modal -->
+    <div id="titleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="titleModalTitle">Add New Title</h3>
+                <button class="modal-close" data-modal="title">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="titleForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Show ID</label>
+                            <input type="text" id="titleShowId" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Title</label>
+                            <input type="text" id="titleName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Type</label>
+                            <select id="titleType" class="form-control" required>
+                                <option value="">Select Type</option>
+                                <option value="Movie">Movie</option>
+                                <option value="TV Show">TV Show</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Release Year</label>
+                            <input type="number" id="titleYear" class="form-control" min="1900" max="2024" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rating</label>
+                            <select id="titleRating" class="form-control" required>
+                                <option value="">Select Rating</option>
+                                <option value="G">G</option>
+                                <option value="PG">PG</option>
+                                <option value="PG-13">PG-13</option>
+                                <option value="R">R</option>
+                                <option value="TV-Y">TV-Y</option>
+                                <option value="TV-Y7">TV-Y7</option>
+                                <option value="TV-G">TV-G</option>
+                                <option value="TV-PG">TV-PG</option>
+                                <option value="TV-14">TV-14</option>
+                                <option value="TV-MA">TV-MA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration</label>
+                            <input type="text" id="titleDuration" class="form-control" placeholder="e.g., 120 min or 3 seasons" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="titleDescription" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Genres (comma-separated)</label>
+                        <input type="text" id="titleGenres" class="form-control" placeholder="Action, Drama, Thriller" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Countries (comma-separated)</label>
+                        <input type="text" id="titleCountries" class="form-control" placeholder="United States, United Kingdom" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Directors (comma-separated)</label>
+                        <input type="text" id="titleDirectors" class="form-control" placeholder="Christopher Nolan, Peter Jackson" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cast (comma-separated)</label>
+                        <input type="text" id="titleCast" class="form-control" placeholder="Leonardo DiCaprio, Tom Hardy" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date Added</label>
+                        <input type="date" id="titleDateAdded" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" onclick="netflixApp.closeModal('title')">Cancel</button>
+                <button class="btn btn--primary" onclick="netflixApp.saveTitleForm()">Save Title</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="userModalTitle">Add New User</h3>
+                <button class="modal-close" data-modal="user">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="userEmail">Email</label>
+                            <input type="email" id="userEmail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="userUsername">Username</label>
+                            <input type="text" id="userUsername" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="userPassword">Password</label>
+                            <input type="password" id="userPassword" class="form-control" placeholder="Set or reset password">
+                            <small class="form-help" id="userPasswordHelp">Required when creating a user. Leave blank to keep the current password.</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="userDateOfBirth">Date of Birth</label>
+                            <input type="date" id="userDateOfBirth" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="userSubscriptionPlan">Subscription Plan</label>
+                            <select id="userSubscriptionPlan" class="form-control">
+                                <option value="keep">Keep current plan</option>
+                                <option value="none">No active subscription</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" onclick="netflixApp.closeModal('user')">Cancel</button>
+                <button class="btn btn--primary" onclick="netflixApp.saveUserForm()">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-app.js"></script>
+</body>
+</html>
